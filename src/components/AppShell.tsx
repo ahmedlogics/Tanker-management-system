@@ -112,7 +112,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {user ? (
             <div className="flex items-center gap-2">
               <div className="hidden sm:block text-right leading-tight">
-                <div className="text-xs text-muted-foreground">{user.role === "owner" ? "Tanker Owner" : "Customer"}</div>
+                <div className="text-xs text-muted-foreground">{user.role === "admin" ? "Admin" : user.role === "owner" ? "Tanker Owner" : "Customer"}</div>
                 <div className="text-sm font-bold text-primary truncate max-w-[140px]">{user.fullName}</div>
               </div>
               <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
