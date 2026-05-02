@@ -191,11 +191,3 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
     </div>
   );
 }
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl bg-muted p-4">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="mt-1 font-bold text-primary">{value}</div>
-    </div>
-  );
-}
