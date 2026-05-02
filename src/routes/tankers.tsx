@@ -3,6 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Plus, Search, Truck, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/tankers")({
   head: () => ({
