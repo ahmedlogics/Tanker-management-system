@@ -13,6 +13,7 @@ import { Route as TankersRouteImport } from './routes/tankers'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as DeliveriesRouteImport } from './routes/deliveries'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -38,6 +39,11 @@ const SigninRoute = SigninRouteImport.update({
 const PaymentsRoute = PaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersRoute = OrdersRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
   '/orders': typeof OrdersRoute
+  '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
   '/orders': typeof OrdersRoute
+  '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
   '/orders': typeof OrdersRoute
+  '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliveries'
     | '/orders'
+    | '/payment'
     | '/payments'
     | '/signin'
     | '/signup'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliveries'
     | '/orders'
+    | '/payment'
     | '/payments'
     | '/signin'
     | '/signup'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliveries'
     | '/orders'
+    | '/payment'
     | '/payments'
     | '/signin'
     | '/signup'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DeliveriesRoute: typeof DeliveriesRoute
   OrdersRoute: typeof OrdersRoute
+  PaymentRoute: typeof PaymentRoute
   PaymentsRoute: typeof PaymentsRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/payments'
       fullPath: '/payments'
       preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DeliveriesRoute: DeliveriesRoute,
   OrdersRoute: OrdersRoute,
+  PaymentRoute: PaymentRoute,
   PaymentsRoute: PaymentsRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
