@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Truck, ClipboardList, Droplets, TrendingUp, Activity, ArrowUpRight } from "lucide-react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -66,6 +67,8 @@ const recent = [
 ];
 
 function DashboardPage() {
+  const { ok } = useRoleGuard(["admin"]);
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">

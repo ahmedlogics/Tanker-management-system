@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/ui-bits";
 import { useEffect, useMemo, useState } from "react";
@@ -8,10 +8,10 @@ import {
   AREA_DAILY_LIMIT,
   getAreaUsage,
   estimateETA,
-  addBooking,
+  setPendingBooking,
   currentUser,
 } from "@/lib/tmms-store";
-import { Droplets, MapPin, Clock, CheckCircle2, ArrowRight } from "lucide-react";
+import { Droplets, MapPin, Clock, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/book-tanker")({
   head: () => ({
@@ -29,13 +29,15 @@ function BookTankerPage() {
   const [area, setArea] = useState<string>(KARACHI_AREAS[0]);
   const [size, setSize] = useState<500 | 1000 | 2000>(1000);
   const [address, setAddress] = useState("");
-  const [success, setSuccess] = useState<{ id: string; eta: string } | null>(null);
 
   useEffect(() => {
-    if (!user) navigate({ to: "/signin" });
-  }, [user, navigate]);
+    const u = currentUser();
+    setUser(u);
+    if (!u) navigate({ to: "/signin" });
+    else if (u.role === "admin") navigate({ to: "/dashboard" });
+  }, [navigate]);
 
-  const usage = useMemo(() => getAreaUsage(area), [area, success]);
+  const usage = useMemo(() => getAreaUsage(area), [area]);
   const remaining = AREA_DAILY_LIMIT - usage;
   const price = TANKER_PRICES[size];
   const eta = estimateETA();
@@ -44,56 +46,12 @@ function BookTankerPage() {
     e.preventDefault();
     if (!user) return;
     if (remaining <= 0) return;
-    const b = addBooking({
-      userEmail: user.email,
-      customer: user.fullName,
-      area,
-      size,
-      price,
-      address,
-      eta,
-    });
-    setSuccess({ id: b.id, eta });
+    if (!address.trim()) return;
+    setPendingBooking({ area, size, price, address: address.trim(), eta });
+    navigate({ to: "/payment" });
   };
 
   if (!user) return null;
-
-  if (success) {
-    return (
-      <AppShell>
-        <div className="p-4 md:p-8 max-w-3xl mx-auto">
-          <div className="bg-card rounded-2xl border border-border shadow-elegant p-8 md:p-12 text-center animate-fade-up">
-            <div className="mx-auto h-16 w-16 rounded-full bg-success/15 flex items-center justify-center">
-              <CheckCircle2 className="h-8 w-8 text-success" />
-            </div>
-            <h2 className="mt-5 text-3xl font-black text-primary">Booking Confirmed</h2>
-            <p className="mt-2 text-muted-foreground">
-              Order <span className="font-bold text-primary">{success.id}</span> has been placed.
-            </p>
-            <div className="mt-6 grid sm:grid-cols-3 gap-3">
-              <Stat label="Area" value={area} />
-              <Stat label="Tanker" value={`${size}L`} />
-              <Stat label="ETA" value={success.eta} />
-            </div>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <Link
-                to="/orders"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg gradient-accent text-accent-foreground font-bold shadow-elegant"
-              >
-                View Orders <ArrowRight className="h-4 w-4" />
-              </Link>
-              <button
-                onClick={() => setSuccess(null)}
-                className="px-5 py-3 rounded-lg border border-border bg-muted font-bold hover:bg-card transition"
-              >
-                Book Another
-              </button>
-            </div>
-          </div>
-        </div>
-      </AppShell>
-    );
-  }
 
   return (
     <AppShell>
@@ -230,14 +188,6 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
     <div className="flex items-center justify-between">
       <span className="text-muted-foreground">{label}</span>
       <span className="font-semibold text-foreground">{value}</span>
-    </div>
-  );
-}
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl bg-muted p-4">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="mt-1 font-bold text-primary">{value}</div>
     </div>
   );
 }

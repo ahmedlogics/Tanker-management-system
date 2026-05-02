@@ -4,6 +4,7 @@ import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { useEffect, useState } from "react";
 import { getComplaints, resolveComplaint, type Complaint } from "@/lib/tmms-store";
 import { CheckCircle2, MessageSquareWarning } from "lucide-react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/complaints")({
   head: () => ({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/complaints")({
 });
 
 function ComplaintsPage() {
+  const { ok } = useRoleGuard(["admin"]);
   const [items, setItems] = useState<Complaint[]>([]);
 
   useEffect(() => {
@@ -28,6 +30,7 @@ function ComplaintsPage() {
   const pending = items.filter((c) => c.status === "pending").length;
   const resolved = items.filter((c) => c.status === "resolved").length;
 
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">

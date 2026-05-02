@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { MapPin, Clock, Droplets } from "lucide-react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/deliveries")({
   head: () => ({
@@ -26,6 +27,8 @@ const deliveries: { id: string; tanker: string; hydrant: string; destination: st
 ];
 
 function DeliveriesPage() {
+  const { ok } = useRoleGuard(["admin"]);
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">

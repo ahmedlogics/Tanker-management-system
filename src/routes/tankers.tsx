@@ -3,6 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Plus, Search, Truck, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/tankers")({
   head: () => ({
@@ -37,6 +38,7 @@ const initial: Tanker[] = [
 ];
 
 function TankersPage() {
+  const { ok } = useRoleGuard(["admin"]);
   const [tankers, setTankers] = useState(initial);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "busy" | "offline">("all");
@@ -54,6 +56,7 @@ function TankersPage() {
     [tankers, q, filter],
   );
 
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">

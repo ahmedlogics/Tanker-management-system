@@ -13,7 +13,9 @@ import { Route as TankersRouteImport } from './routes/tankers'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as MyOrdersRouteImport } from './routes/my-orders'
 import { Route as DeliveriesRouteImport } from './routes/deliveries'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ComplaintsRouteImport } from './routes/complaints'
@@ -40,9 +42,19 @@ const PaymentsRoute = PaymentsRouteImport.update({
   path: '/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyOrdersRoute = MyOrdersRouteImport.update({
+  id: '/my-orders',
+  path: '/my-orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeliveriesRoute = DeliveriesRouteImport.update({
@@ -77,7 +89,9 @@ export interface FileRoutesByFullPath {
   '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
+  '/my-orders': typeof MyOrdersRoute
   '/orders': typeof OrdersRoute
+  '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -89,7 +103,9 @@ export interface FileRoutesByTo {
   '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
+  '/my-orders': typeof MyOrdersRoute
   '/orders': typeof OrdersRoute
+  '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -102,7 +118,9 @@ export interface FileRoutesById {
   '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
+  '/my-orders': typeof MyOrdersRoute
   '/orders': typeof OrdersRoute
+  '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -116,7 +134,9 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/dashboard'
     | '/deliveries'
+    | '/my-orders'
     | '/orders'
+    | '/payment'
     | '/payments'
     | '/signin'
     | '/signup'
@@ -128,7 +148,9 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/dashboard'
     | '/deliveries'
+    | '/my-orders'
     | '/orders'
+    | '/payment'
     | '/payments'
     | '/signin'
     | '/signup'
@@ -140,7 +162,9 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/dashboard'
     | '/deliveries'
+    | '/my-orders'
     | '/orders'
+    | '/payment'
     | '/payments'
     | '/signin'
     | '/signup'
@@ -153,7 +177,9 @@ export interface RootRouteChildren {
   ComplaintsRoute: typeof ComplaintsRoute
   DashboardRoute: typeof DashboardRoute
   DeliveriesRoute: typeof DeliveriesRoute
+  MyOrdersRoute: typeof MyOrdersRoute
   OrdersRoute: typeof OrdersRoute
+  PaymentRoute: typeof PaymentRoute
   PaymentsRoute: typeof PaymentsRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
@@ -190,11 +216,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders': {
       id: '/orders'
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-orders': {
+      id: '/my-orders'
+      path: '/my-orders'
+      fullPath: '/my-orders'
+      preLoaderRoute: typeof MyOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deliveries': {
@@ -241,7 +281,9 @@ const rootRouteChildren: RootRouteChildren = {
   ComplaintsRoute: ComplaintsRoute,
   DashboardRoute: DashboardRoute,
   DeliveriesRoute: DeliveriesRoute,
+  MyOrdersRoute: MyOrdersRoute,
   OrdersRoute: OrdersRoute,
+  PaymentRoute: PaymentRoute,
   PaymentsRoute: PaymentsRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,

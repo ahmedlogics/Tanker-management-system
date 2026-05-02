@@ -17,16 +17,30 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { signOut } from "@/lib/tmms-store";
 
-const navItems = [
+const customerNav = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
+  { to: "/my-orders", label: "My Orders", icon: ClipboardList },
+  { to: "/payments", label: "Payments", icon: Wallet },
+  { to: "/complaints", label: "Complaints", icon: MessageSquareWarning },
+] as const;
+
+const adminNav = [
   { to: "/", label: "Home", icon: Home },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
   { to: "/tankers", label: "Tankers", icon: Truck },
   { to: "/orders", label: "Orders", icon: ClipboardList },
   { to: "/deliveries", label: "Deliveries", icon: PackageCheck },
   { to: "/payments", label: "Payments", icon: Wallet },
   { to: "/complaints", label: "Complaints", icon: MessageSquareWarning },
 ] as const;
+
+const guestNav = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
+] as const;
+
+type NavItem = { to: string; label: string; icon: React.ElementType };
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -48,11 +62,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     navigate({ to: "/" });
   };
 
+  const items: readonly NavItem[] = !user
+    ? guestNav
+    : user.role === "admin"
+      ? adminNav
+      : customerNav;
+
   return (
     <div className="min-h-screen flex w-full bg-background">
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground sticky top-0 h-screen">
-        <SidebarInner path={path} />
+        <SidebarInner path={path} items={items} />
       </aside>
 
       {/* Sidebar - mobile drawer */}
@@ -63,7 +83,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileOpen(false)}
           />
           <aside className="fixed inset-y-0 left-0 z-50 w-72 bg-sidebar text-sidebar-foreground lg:hidden animate-slide-in flex flex-col">
-            <SidebarInner path={path} onNavigate={() => setMobileOpen(false)} />
+            <SidebarInner path={path} items={items} onNavigate={() => setMobileOpen(false)} />
           </aside>
         </>
       )}
@@ -92,7 +112,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {user ? (
             <div className="flex items-center gap-2">
               <div className="hidden sm:block text-right leading-tight">
-                <div className="text-xs text-muted-foreground">{user.role === "owner" ? "Tanker Owner" : "Customer"}</div>
+                <div className="text-xs text-muted-foreground">{user.role === "admin" ? "Admin" : user.role === "owner" ? "Tanker Owner" : "Customer"}</div>
                 <div className="text-sm font-bold text-primary truncate max-w-[140px]">{user.fullName}</div>
               </div>
               <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
@@ -129,9 +149,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function SidebarInner({
   path,
+  items,
   onNavigate,
 }: {
   path: string;
+  items: readonly NavItem[];
   onNavigate?: () => void;
 }) {
   return (
@@ -159,14 +181,14 @@ function SidebarInner({
         <div className="text-[11px] uppercase tracking-wider text-sidebar-foreground/50 px-3 py-2">
           Operations
         </div>
-        {navItems.map((item) => {
+        {items.map((item) => {
           const active =
             item.to === "/" ? path === "/" : path.startsWith(item.to);
           const Icon = item.icon;
           return (
             <Link
               key={item.to}
-              to={item.to}
+              to={item.to as never}
               onClick={onNavigate}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 active

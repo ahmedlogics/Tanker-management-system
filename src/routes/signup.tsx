@@ -26,7 +26,7 @@ function SignUpPage() {
     e.preventDefault();
     const r = signUp({ fullName, phone, email, password, role });
     if (!r.ok) return setError(r.error ?? "Sign up failed");
-    navigate({ to: "/dashboard" });
+    navigate({ to: role === "admin" ? "/dashboard" : "/my-orders" });
   };
 
   return (
@@ -74,7 +74,7 @@ function SignUpPage() {
             <div>
               <span className="text-sm font-semibold text-foreground/85">Role</span>
               <div className="mt-1.5 grid grid-cols-2 gap-2">
-                {(["customer", "owner"] as Role[]).map((r) => (
+                {(["customer", "admin"] as Role[]).map((r) => (
                   <button
                     type="button"
                     key={r}
@@ -85,7 +85,7 @@ function SignUpPage() {
                         : "border-border bg-muted text-muted-foreground hover:border-secondary/50"
                     }`}
                   >
-                    {r === "customer" ? "Customer" : "Tanker Owner"}
+                    {r === "customer" ? "Customer" : "Admin"}
                   </button>
                 ))}
               </div>

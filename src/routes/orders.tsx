@@ -4,6 +4,7 @@ import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Search, Filter, Plus, MessageSquareWarning, X, Clock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { addComplaint, getBookings, currentUser, type Booking } from "@/lib/tmms-store";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
@@ -59,6 +60,7 @@ function bookingToRow(b: Booking): Row {
 }
 
 function OrdersPage() {
+  const { ok } = useRoleGuard(["admin"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<OS | "all">("all");
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -91,6 +93,7 @@ function OrdersPage() {
     return c;
   }, [orders]);
 
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">
