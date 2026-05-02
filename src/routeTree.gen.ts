@@ -15,6 +15,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as MyOrdersRouteImport } from './routes/my-orders'
 import { Route as DeliveriesRouteImport } from './routes/deliveries'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ComplaintsRouteImport } from './routes/complaints'
@@ -51,6 +52,11 @@ const OrdersRoute = OrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyOrdersRoute = MyOrdersRouteImport.update({
+  id: '/my-orders',
+  path: '/my-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DeliveriesRoute = DeliveriesRouteImport.update({
   id: '/deliveries',
   path: '/deliveries',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
+  '/my-orders': typeof MyOrdersRoute
   '/orders': typeof OrdersRoute
   '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
+  '/my-orders': typeof MyOrdersRoute
   '/orders': typeof OrdersRoute
   '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
+  '/my-orders': typeof MyOrdersRoute
   '/orders': typeof OrdersRoute
   '/payment': typeof PaymentRoute
   '/payments': typeof PaymentsRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/dashboard'
     | '/deliveries'
+    | '/my-orders'
     | '/orders'
     | '/payment'
     | '/payments'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/dashboard'
     | '/deliveries'
+    | '/my-orders'
     | '/orders'
     | '/payment'
     | '/payments'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/dashboard'
     | '/deliveries'
+    | '/my-orders'
     | '/orders'
     | '/payment'
     | '/payments'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   ComplaintsRoute: typeof ComplaintsRoute
   DashboardRoute: typeof DashboardRoute
   DeliveriesRoute: typeof DeliveriesRoute
+  MyOrdersRoute: typeof MyOrdersRoute
   OrdersRoute: typeof OrdersRoute
   PaymentRoute: typeof PaymentRoute
   PaymentsRoute: typeof PaymentsRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-orders': {
+      id: '/my-orders'
+      path: '/my-orders'
+      fullPath: '/my-orders'
+      preLoaderRoute: typeof MyOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/deliveries': {
       id: '/deliveries'
       path: '/deliveries'
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComplaintsRoute: ComplaintsRoute,
   DashboardRoute: DashboardRoute,
   DeliveriesRoute: DeliveriesRoute,
+  MyOrdersRoute: MyOrdersRoute,
   OrdersRoute: OrdersRoute,
   PaymentRoute: PaymentRoute,
   PaymentsRoute: PaymentsRoute,

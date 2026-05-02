@@ -17,16 +17,30 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { signOut } from "@/lib/tmms-store";
 
-const navItems = [
+const customerNav = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
+  { to: "/my-orders", label: "My Orders", icon: ClipboardList },
+  { to: "/payments", label: "Payments", icon: Wallet },
+  { to: "/complaints", label: "Complaints", icon: MessageSquareWarning },
+] as const;
+
+const adminNav = [
   { to: "/", label: "Home", icon: Home },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
   { to: "/tankers", label: "Tankers", icon: Truck },
   { to: "/orders", label: "Orders", icon: ClipboardList },
   { to: "/deliveries", label: "Deliveries", icon: PackageCheck },
   { to: "/payments", label: "Payments", icon: Wallet },
   { to: "/complaints", label: "Complaints", icon: MessageSquareWarning },
 ] as const;
+
+const guestNav = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
+] as const;
+
+type NavItem = { to: string; label: string; icon: React.ElementType };
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
