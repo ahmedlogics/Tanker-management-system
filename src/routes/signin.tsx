@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Droplets, ArrowRight, Mail, Lock } from "lucide-react";
 import { useState } from "react";
-import { signIn } from "@/lib/tmms-store";
+import { signIn, currentUser } from "@/lib/tmms-store";
 
 export const Route = createFileRoute("/signin")({
   head: () => ({
@@ -17,13 +17,22 @@ function SignInPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"customer" | "admin">("customer");
   const [error, setError] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = signIn(email, password);
     if (!r.ok) return setError(r.error ?? "Sign in failed");
-    navigate({ to: "/dashboard" });
+    const u = currentUser();
+    if (!u) return setError("Sign in failed");
+    if (role === "admin" && u.role !== "admin") {
+      return setError("This account does not have admin access.");
+    }
+    if (role === "customer" && u.role === "admin") {
+      return setError("Admin accounts must sign in using the Admin role.");
+    }
+    navigate({ to: u.role === "admin" ? "/dashboard" : "/my-orders" });
   };
 
   return (
