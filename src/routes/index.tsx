@@ -65,14 +65,22 @@ function HomePage() {
             <a href="#features" className="hover:text-white">Features</a>
             <a href="#problem" className="hover:text-white">The Problem</a>
             <a href="#stats" className="hover:text-white">Stats</a>
-            <Link to="/dashboard" className="hover:text-white">Dashboard</Link>
+            <Link to="/book-tanker" className="hover:text-white">Book Tanker</Link>
           </nav>
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-accent text-accent-foreground font-semibold text-sm shadow-elegant hover:opacity-95 transition"
-          >
-            Sign in <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/signin"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold text-sm hover:bg-white/20 transition"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-accent text-accent-foreground font-semibold text-sm shadow-elegant hover:opacity-95 transition"
+            >
+              Sign Up <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -108,16 +116,16 @@ function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/dashboard"
+                to="/signup"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg gradient-accent text-accent-foreground font-bold shadow-elegant hover:translate-y-[-2px] transition"
               >
-                Get Started <ArrowRight className="h-4 w-4" />
+                Sign Up <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/dashboard"
+                to="/signin"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold hover:bg-white/20 transition"
               >
-                View Dashboard
+                Sign In
               </Link>
             </div>
 

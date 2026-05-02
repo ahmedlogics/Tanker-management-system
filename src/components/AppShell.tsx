@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Truck,
@@ -9,21 +9,44 @@ import {
   Droplets,
   Menu,
   X,
+  PlusCircle,
+  MessageSquareWarning,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { signOut } from "@/lib/tmms-store";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
   { to: "/tankers", label: "Tankers", icon: Truck },
   { to: "/orders", label: "Orders", icon: ClipboardList },
   { to: "/deliveries", label: "Deliveries", icon: PackageCheck },
   { to: "/payments", label: "Payments", icon: Wallet },
+  { to: "/complaints", label: "Complaints", icon: MessageSquareWarning },
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const initials = user
+    ? user.fullName
+        .split(" ")
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "AK";
+
+  const handleSignOut = () => {
+    signOut();
+    navigate({ to: "/" });
+  };
 
   return (
     <div className="min-h-screen flex w-full bg-background">
@@ -66,9 +89,36 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="h-2 w-2 rounded-full bg-success animate-pulse-ring" />
             Live system • Karachi Region
           </div>
-          <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-            AK
-          </div>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:block text-right leading-tight">
+                <div className="text-xs text-muted-foreground">{user.role === "owner" ? "Tanker Owner" : "Customer"}</div>
+                <div className="text-sm font-bold text-primary truncate max-w-[140px]">{user.fullName}</div>
+              </div>
+              <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                {initials}
+              </div>
+              <button
+                onClick={handleSignOut}
+                title="Sign out"
+                className="p-2 rounded-md hover:bg-muted text-muted-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link to="/signin" className="text-sm font-bold text-primary hover:text-secondary px-3 py-1.5">
+                Sign In
+              </Link>
+              <Link
+                to="/signup"
+                className="text-sm font-bold px-3 py-1.5 rounded-lg gradient-accent text-accent-foreground shadow-elegant"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
         </header>
 
         <main className="flex-1 min-w-0">{children}</main>
