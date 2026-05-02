@@ -181,7 +181,7 @@ function SidebarInner({
         <div className="text-[11px] uppercase tracking-wider text-sidebar-foreground/50 px-3 py-2">
           Operations
         </div>
-        {navItems.map((item) => {
+        {items.map((item) => {
           const active =
             item.to === "/" ? path === "/" : path.startsWith(item.to);
           const Icon = item.icon;
