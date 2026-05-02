@@ -149,9 +149,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function SidebarInner({
   path,
+  items,
   onNavigate,
 }: {
   path: string;
+  items: readonly NavItem[];
   onNavigate?: () => void;
 }) {
   return (
