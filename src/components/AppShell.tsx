@@ -62,11 +62,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     navigate({ to: "/" });
   };
 
+  const items: readonly NavItem[] = !user
+    ? guestNav
+    : user.role === "admin"
+      ? adminNav
+      : customerNav;
+
   return (
     <div className="min-h-screen flex w-full bg-background">
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground sticky top-0 h-screen">
-        <SidebarInner path={path} />
+        <SidebarInner path={path} items={items} />
       </aside>
 
       {/* Sidebar - mobile drawer */}
@@ -77,7 +83,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileOpen(false)}
           />
           <aside className="fixed inset-y-0 left-0 z-50 w-72 bg-sidebar text-sidebar-foreground lg:hidden animate-slide-in flex flex-col">
-            <SidebarInner path={path} onNavigate={() => setMobileOpen(false)} />
+            <SidebarInner path={path} items={items} onNavigate={() => setMobileOpen(false)} />
           </aside>
         </>
       )}
