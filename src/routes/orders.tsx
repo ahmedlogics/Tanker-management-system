@@ -60,6 +60,7 @@ function bookingToRow(b: Booking): Row {
 }
 
 function OrdersPage() {
+  const { ok } = useRoleGuard(["admin"]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<OS | "all">("all");
   const [bookings, setBookings] = useState<Booking[]>([]);
