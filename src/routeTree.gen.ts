@@ -10,15 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TankersRouteImport } from './routes/tankers'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as DeliveriesRouteImport } from './routes/deliveries'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ComplaintsRouteImport } from './routes/complaints'
+import { Route as BookTankerRouteImport } from './routes/book-tanker'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TankersRoute = TankersRouteImport.update({
   id: '/tankers',
   path: '/tankers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentsRoute = PaymentsRouteImport.update({
@@ -41,6 +55,16 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComplaintsRoute = ComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookTankerRoute = BookTankerRouteImport.update({
+  id: '/book-tanker',
+  path: '/book-tanker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -49,56 +73,90 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/book-tanker': typeof BookTankerRoute
+  '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
   '/orders': typeof OrdersRoute
   '/payments': typeof PaymentsRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/tankers': typeof TankersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/book-tanker': typeof BookTankerRoute
+  '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
   '/orders': typeof OrdersRoute
   '/payments': typeof PaymentsRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/tankers': typeof TankersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/book-tanker': typeof BookTankerRoute
+  '/complaints': typeof ComplaintsRoute
   '/dashboard': typeof DashboardRoute
   '/deliveries': typeof DeliveriesRoute
   '/orders': typeof OrdersRoute
   '/payments': typeof PaymentsRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/tankers': typeof TankersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/book-tanker'
+    | '/complaints'
     | '/dashboard'
     | '/deliveries'
     | '/orders'
     | '/payments'
+    | '/signin'
+    | '/signup'
     | '/tankers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/deliveries' | '/orders' | '/payments' | '/tankers'
+  to:
+    | '/'
+    | '/book-tanker'
+    | '/complaints'
+    | '/dashboard'
+    | '/deliveries'
+    | '/orders'
+    | '/payments'
+    | '/signin'
+    | '/signup'
+    | '/tankers'
   id:
     | '__root__'
     | '/'
+    | '/book-tanker'
+    | '/complaints'
     | '/dashboard'
     | '/deliveries'
     | '/orders'
     | '/payments'
+    | '/signin'
+    | '/signup'
     | '/tankers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookTankerRoute: typeof BookTankerRoute
+  ComplaintsRoute: typeof ComplaintsRoute
   DashboardRoute: typeof DashboardRoute
   DeliveriesRoute: typeof DeliveriesRoute
   OrdersRoute: typeof OrdersRoute
   PaymentsRoute: typeof PaymentsRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
   TankersRoute: typeof TankersRoute
 }
 
@@ -109,6 +167,20 @@ declare module '@tanstack/react-router' {
       path: '/tankers'
       fullPath: '/tankers'
       preLoaderRoute: typeof TankersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payments': {
@@ -139,6 +211,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/complaints': {
+      id: '/complaints'
+      path: '/complaints'
+      fullPath: '/complaints'
+      preLoaderRoute: typeof ComplaintsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book-tanker': {
+      id: '/book-tanker'
+      path: '/book-tanker'
+      fullPath: '/book-tanker'
+      preLoaderRoute: typeof BookTankerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -151,10 +237,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookTankerRoute: BookTankerRoute,
+  ComplaintsRoute: ComplaintsRoute,
   DashboardRoute: DashboardRoute,
   DeliveriesRoute: DeliveriesRoute,
   OrdersRoute: OrdersRoute,
   PaymentsRoute: PaymentsRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
   TankersRoute: TankersRoute,
 }
 export const routeTree = rootRouteImport
