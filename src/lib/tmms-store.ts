@@ -1,7 +1,7 @@
 // Simple localStorage-backed mock store for auth, bookings, and complaints.
 // Frontend-only — preserves design without requiring a backend.
 
-export type Role = "customer" | "owner";
+export type Role = "customer" | "admin" | "owner";
 export type User = {
   id: string;
   fullName: string;
