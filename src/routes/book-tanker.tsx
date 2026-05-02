@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/ui-bits";
 import { useEffect, useMemo, useState } from "react";
@@ -8,10 +8,10 @@ import {
   AREA_DAILY_LIMIT,
   getAreaUsage,
   estimateETA,
-  addBooking,
+  setPendingBooking,
   currentUser,
 } from "@/lib/tmms-store";
-import { Droplets, MapPin, Clock, CheckCircle2, ArrowRight } from "lucide-react";
+import { Droplets, MapPin, Clock, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/book-tanker")({
   head: () => ({
