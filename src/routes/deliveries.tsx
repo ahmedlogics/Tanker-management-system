@@ -27,6 +27,8 @@ const deliveries: { id: string; tanker: string; hydrant: string; destination: st
 ];
 
 function DeliveriesPage() {
+  const { ok } = useRoleGuard(["admin"]);
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">
