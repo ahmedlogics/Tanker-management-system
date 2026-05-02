@@ -26,7 +26,7 @@ function SignUpPage() {
     e.preventDefault();
     const r = signUp({ fullName, phone, email, password, role });
     if (!r.ok) return setError(r.error ?? "Sign up failed");
-    navigate({ to: "/dashboard" });
+    navigate({ to: role === "admin" ? "/dashboard" : "/my-orders" });
   };
 
   return (
