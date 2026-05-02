@@ -4,6 +4,7 @@ import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Search, Filter, Plus, MessageSquareWarning, X, Clock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { addComplaint, getBookings, currentUser, type Booking } from "@/lib/tmms-store";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
