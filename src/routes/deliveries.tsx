@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { MapPin, Clock, Droplets } from "lucide-react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/deliveries")({
   head: () => ({
