@@ -56,6 +56,7 @@ function TankersPage() {
     [tankers, q, filter],
   );
 
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">
