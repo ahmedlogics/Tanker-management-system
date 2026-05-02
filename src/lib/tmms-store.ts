@@ -141,7 +141,26 @@ export function addBooking(b: Omit<Booking, "id" | "createdAt" | "status">): Boo
   return newB;
 }
 
-// Complaints
+// Pending booking (between Book Tanker form and Payment page)
+export type PendingBooking = {
+  area: string;
+  size: 500 | 1000 | 2000;
+  price: number;
+  address: string;
+  eta: string;
+};
+const K_PENDING = "tmms_pending_booking";
+export function setPendingBooking(p: PendingBooking) {
+  write(K_PENDING, p);
+}
+export function getPendingBooking(): PendingBooking | null {
+  return read<PendingBooking | null>(K_PENDING, null);
+}
+export function clearPendingBooking() {
+  if (!isClient()) return;
+  localStorage.removeItem(K_PENDING);
+  window.dispatchEvent(new Event("tmms-store"));
+}
 export function getComplaints(): Complaint[] {
   return read<Complaint[]>(K_COMPLAINTS, []);
 }
