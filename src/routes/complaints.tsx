@@ -4,6 +4,7 @@ import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { useEffect, useState } from "react";
 import { getComplaints, resolveComplaint, type Complaint } from "@/lib/tmms-store";
 import { CheckCircle2, MessageSquareWarning } from "lucide-react";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/complaints")({
   head: () => ({
