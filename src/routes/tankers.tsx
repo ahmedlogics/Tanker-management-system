@@ -38,6 +38,7 @@ const initial: Tanker[] = [
 ];
 
 function TankersPage() {
+  const { ok } = useRoleGuard(["admin"]);
   const [tankers, setTankers] = useState(initial);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "busy" | "offline">("all");
