@@ -30,6 +30,7 @@ function ComplaintsPage() {
   const pending = items.filter((c) => c.status === "pending").length;
   const resolved = items.filter((c) => c.status === "resolved").length;
 
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">
