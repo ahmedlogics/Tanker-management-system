@@ -17,6 +17,7 @@ export const Route = createFileRoute("/complaints")({
 });
 
 function ComplaintsPage() {
+  const { ok } = useRoleGuard(["admin"]);
   const [items, setItems] = useState<Complaint[]>([]);
 
   useEffect(() => {
