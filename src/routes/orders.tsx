@@ -93,6 +93,7 @@ function OrdersPage() {
     return c;
   }, [orders]);
 
+  if (!ok) return null;
   return (
     <AppShell>
       <div className="p-4 md:p-8">
