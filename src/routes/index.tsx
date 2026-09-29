@@ -118,7 +118,7 @@ function HomePage() {
       </header>
 
       {/* Hero with slider */}
-      <section className="relative h-[92vh] min-h-[620px] w-full overflow-hidden">
+      <section className="relative min-h-[92vh] md:h-[92vh] md:min-h-[640px] w-full overflow-hidden">
         {slides.map((s, i) => (
           <img
             key={i}
@@ -134,7 +134,7 @@ function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/75 to-primary/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-transparent to-transparent" />
 
-        <div className="relative h-full container-tmms flex flex-col justify-center text-white">
+        <div className="relative h-full container-tmms flex flex-col justify-center pt-24 md:pt-32 pb-12 text-white">
           <div className="max-w-3xl animate-fade-up">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold uppercase tracking-wider">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
