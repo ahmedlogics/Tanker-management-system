@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Plus, Search, Truck, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRoleGuard } from "@/hooks/use-role-guard";
 
 export const Route = createFileRoute("/tankers")({
@@ -27,22 +27,40 @@ type Tanker = {
 };
 
 const initial: Tanker[] = [
-  { id: "TMK-1138", driver: "Asad Khan", capacity: "5,000 L", region: "Gulshan", status: "busy", trips: 412 },
-  { id: "TMK-0942", driver: "Imran Baloch", capacity: "8,000 L", region: "DHA", status: "available", trips: 528 },
-  { id: "TMK-2207", driver: "Saleem Memon", capacity: "3,000 L", region: "North Nazimabad", status: "available", trips: 198 },
-  { id: "TMK-1810", driver: "Rashid Ali", capacity: "5,000 L", region: "Korangi", status: "busy", trips: 376 },
-  { id: "TMK-0455", driver: "Yousuf Shah", capacity: "10,000 L", region: "Malir", status: "offline", trips: 612 },
-  { id: "TMK-3301", driver: "Bilal Ahmed", capacity: "8,000 L", region: "Saddar", status: "available", trips: 240 },
-  { id: "TMK-2014", driver: "Faisal Qureshi", capacity: "5,000 L", region: "Lyari", status: "busy", trips: 305 },
-  { id: "TMK-1602", driver: "Naveed Hussain", capacity: "3,000 L", region: "Orangi", status: "available", trips: 158 },
+  { id: "TMK-1138", driver: "Asad Khan", capacity: "1,000 L", region: "Gulshan", status: "busy", trips: 412 },
+  { id: "TMK-0942", driver: "Imran Baloch", capacity: "2,000 L", region: "DHA", status: "available", trips: 528 },
+  { id: "TMK-2207", driver: "Saleem Memon", capacity: "500 L", region: "North Nazimabad", status: "available", trips: 198 },
+  { id: "TMK-1810", driver: "Rashid Ali", capacity: "1,000 L", region: "Korangi", status: "busy", trips: 376 },
+  { id: "TMK-0455", driver: "Yousuf Shah", capacity: "2,000 L", region: "Malir", status: "offline", trips: 612 },
+  { id: "TMK-3301", driver: "Bilal Ahmed", capacity: "2,000 L", region: "Saddar", status: "available", trips: 240 },
+  { id: "TMK-2014", driver: "Faisal Qureshi", capacity: "1,000 L", region: "Lyari", status: "busy", trips: 305 },
+  { id: "TMK-1602", driver: "Naveed Hussain", capacity: "500 L", region: "Orangi", status: "available", trips: 158 },
 ];
 
 function TankersPage() {
   const { ok } = useRoleGuard(["admin"]);
-  const [tankers, setTankers] = useState(initial);
+  const [tankers, setTankers] = useState<Tanker[]>(initial);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "busy" | "offline">("all");
   const [open, setOpen] = useState(false);
+
+  const fetchTankers = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/tankers");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setTankers(data);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load tankers API:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTankers();
+  }, []);
 
   const filtered = useMemo(
     () =>
@@ -159,20 +177,26 @@ function TankersPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
           <form
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
-              setTankers((t) => [
-                {
-                  id: String(fd.get("id") || `TMK-${Math.floor(Math.random() * 9000 + 1000)}`),
-                  driver: String(fd.get("driver") || "—"),
-                  capacity: String(fd.get("capacity") || "5,000 L"),
-                  region: String(fd.get("region") || "Karachi"),
-                  status: "available",
-                  trips: 0,
-                },
-                ...t,
-              ]);
+              const newTanker = {
+                id: String(fd.get("id") || `TMK-${Math.floor(Math.random() * 9000 + 1000)}`),
+                driver: String(fd.get("driver") || "Fleet Driver"),
+                capacity: String(fd.get("capacity") || "1,000 L"),
+                region: String(fd.get("region") || "Karachi"),
+                status: "available",
+              };
+              try {
+                await fetch("http://127.0.0.1:5000/api/tankers", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(newTanker),
+                });
+                await fetchTankers();
+              } catch (err) {
+                console.error("Failed to add tanker:", err);
+              }
               setOpen(false);
             }}
             className="relative bg-card rounded-2xl shadow-elegant w-full max-w-md p-6 border border-border animate-fade-up"

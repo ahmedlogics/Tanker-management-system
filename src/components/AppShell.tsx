@@ -1,3 +1,4 @@
+import React from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -5,7 +6,6 @@ import {
   ClipboardList,
   PackageCheck,
   Wallet,
-  Home,
   Droplets,
   Menu,
   X,
@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { signOut } from "@/lib/tmms-store";
+import { signOut, type User } from "@/lib/tmms-store";
 
+// No "Home" option on the sidebar as requested
 const customerNav = [
-  { to: "/", label: "Home", icon: Home },
   { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
   { to: "/my-orders", label: "My Orders", icon: ClipboardList },
   { to: "/payments", label: "Payments", icon: Wallet },
@@ -26,17 +26,14 @@ const customerNav = [
 ] as const;
 
 const adminNav = [
-  { to: "/", label: "Home", icon: Home },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/tankers", label: "Tankers", icon: Truck },
-  { to: "/orders", label: "Orders", icon: ClipboardList },
   { to: "/deliveries", label: "Deliveries", icon: PackageCheck },
   { to: "/payments", label: "Payments", icon: Wallet },
   { to: "/complaints", label: "Complaints", icon: MessageSquareWarning },
 ] as const;
 
 const guestNav = [
-  { to: "/", label: "Home", icon: Home },
   { to: "/book-tanker", label: "Book Tanker", icon: PlusCircle },
 ] as const;
 
@@ -72,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex w-full bg-background">
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground sticky top-0 h-screen">
-        <SidebarInner path={path} items={items} />
+        <SidebarInner path={path} items={items} user={user} onSignOut={handleSignOut} />
       </aside>
 
       {/* Sidebar - mobile drawer */}
@@ -83,7 +80,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileOpen(false)}
           />
           <aside className="fixed inset-y-0 left-0 z-50 w-72 bg-sidebar text-sidebar-foreground lg:hidden animate-slide-in flex flex-col">
-            <SidebarInner path={path} items={items} onNavigate={() => setMobileOpen(false)} />
+            <SidebarInner
+              path={path}
+              items={items}
+              user={user}
+              onSignOut={handleSignOut}
+              onNavigate={() => setMobileOpen(false)}
+            />
           </aside>
         </>
       )}
@@ -112,8 +115,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {user ? (
             <div className="flex items-center gap-2">
               <div className="hidden sm:block text-right leading-tight">
-                <div className="text-xs text-muted-foreground">{user.role === "admin" ? "Admin" : user.role === "owner" ? "Tanker Owner" : "Customer"}</div>
-                <div className="text-sm font-bold text-primary truncate max-w-[140px]">{user.fullName}</div>
+                <div className="text-xs text-muted-foreground">
+                  {user.role === "admin" ? "Admin" : user.role === "owner" ? "Tanker Owner" : "Customer"}
+                </div>
+                <div className="text-sm font-bold text-primary truncate max-w-[140px]">
+                  {user.fullName}
+                </div>
               </div>
               <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
                 {initials}
@@ -150,10 +157,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 function SidebarInner({
   path,
   items,
+  user,
+  onSignOut,
   onNavigate,
 }: {
   path: string;
   items: readonly NavItem[];
+  user: User | null;
+  onSignOut: () => void;
   onNavigate?: () => void;
 }) {
   return (
@@ -182,8 +193,7 @@ function SidebarInner({
           Operations
         </div>
         {items.map((item) => {
-          const active =
-            item.to === "/" ? path === "/" : path.startsWith(item.to);
+          const active = path === item.to || (item.to !== "/" && path.startsWith(item.to));
           const Icon = item.icon;
           return (
             <Link
@@ -204,12 +214,38 @@ function SidebarInner({
         })}
       </nav>
 
-      <div className="p-3 border-t border-sidebar-border">
-        <div className="rounded-lg p-3 bg-sidebar-accent">
-          <div className="text-xs text-sidebar-foreground/70">Water delivered today</div>
-          <div className="text-2xl font-black text-sidebar-primary">2.4M L</div>
-          <div className="text-[11px] text-sidebar-foreground/60 mt-0.5">Across 14 hydrants</div>
-        </div>
+      {/* Sidebar bottom area */}
+      <div className="p-3 border-t border-sidebar-border space-y-2.5">
+        {/* On customer side ONLY, show the Water delivered today card */}
+        {user && user.role === "customer" && (
+          <div className="rounded-xl p-3.5 bg-sidebar-accent/80 border border-sidebar-border/50">
+            <div className="text-xs font-medium text-sidebar-foreground/70">Water delivered today</div>
+            <div className="text-2xl font-black text-accent mt-0.5">2.4M L</div>
+            <div className="text-[11px] text-sidebar-foreground/60 mt-0.5">Across 14 hydrants</div>
+          </div>
+        )}
+
+        {/* Dedicated Logout option below on sidebar */}
+        {user ? (
+          <button
+            onClick={() => {
+              if (onNavigate) onNavigate();
+              onSignOut();
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/80 hover:bg-destructive/15 hover:text-destructive transition cursor-pointer"
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span>Logout</span>
+          </button>
+        ) : (
+          <Link
+            to="/signin"
+            onClick={onNavigate}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent text-sm font-semibold hover:bg-sidebar-accent/80 transition"
+          >
+            Sign In
+          </Link>
+        )}
       </div>
     </>
   );

@@ -31,7 +31,23 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-const monthly = [
+import { useEffect, useState } from "react";
+
+type StatCards = {
+  totalOrders: string;
+  activeTankers: string;
+  waterDelivered: string;
+  totalUsers: string;
+};
+
+const initialStats: StatCards = {
+  totalOrders: "48,210",
+  activeTankers: "1,084",
+  waterDelivered: "186 ML",
+  totalUsers: "32,540",
+};
+
+const initialMonthly = [
   { m: "Jan", orders: 3200, water: 1.8 },
   { m: "Feb", orders: 3850, water: 2.1 },
   { m: "Mar", orders: 4200, water: 2.4 },
@@ -43,7 +59,7 @@ const monthly = [
   { m: "Sep", orders: 6300, water: 3.7 },
 ];
 
-const hydrants = [
+const initialHydrants = [
   { name: "Safoora", uses: 312 },
   { name: "Sakhi Hassan", uses: 286 },
   { name: "Manghopir", uses: 254 },
@@ -52,13 +68,13 @@ const hydrants = [
   { name: "Korangi", uses: 142 },
 ];
 
-const tankerStatus = [
-  { name: "Available", value: 612, color: "var(--success)" },
-  { name: "Busy", value: 384, color: "var(--accent)" },
-  { name: "Offline", value: 88, color: "var(--muted-foreground)" },
+const initialTankerStatus = [
+  {"name": "Available", "value": 612, "color": "var(--success)"},
+  {"name": "Busy", "value": 384, "color": "var(--accent)"},
+  {"name": "Offline", "value": 88, "color": "var(--muted-foreground)"},
 ];
 
-const recent = [
+const initialRecent = [
   { id: "ORD-49021", area: "Gulshan-e-Iqbal", capacity: "5,000 L", tanker: "TMK-1138", status: "in_transit" as const, time: "12 min ago" },
   { id: "ORD-49020", area: "DHA Phase 6", capacity: "8,000 L", tanker: "TMK-0942", status: "delivered" as const, time: "28 min ago" },
   { id: "ORD-49019", area: "North Nazimabad", capacity: "3,000 L", tanker: "TMK-2207", status: "pending" as const, time: "41 min ago" },
@@ -68,6 +84,31 @@ const recent = [
 
 function DashboardPage() {
   const { ok } = useRoleGuard(["admin"]);
+  const [stats, setStats] = useState<StatCards>(initialStats);
+  const [recent, setRecent] = useState(initialRecent);
+  const [tankerStatus, setTankerStatus] = useState(initialTankerStatus);
+  const [hydrants, setHydrants] = useState(initialHydrants);
+  const [monthly, setMonthly] = useState(initialMonthly);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/dashboard/stats");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.stats) setStats(data.stats);
+          if (data.recent && Array.isArray(data.recent)) setRecent(data.recent);
+          if (data.tankerStatus && Array.isArray(data.tankerStatus)) setTankerStatus(data.tankerStatus);
+          if (data.hydrants && Array.isArray(data.hydrants)) setHydrants(data.hydrants);
+          if (data.monthly && Array.isArray(data.monthly)) setMonthly(data.monthly);
+        }
+      } catch (err) {
+        console.error("Failed to load dashboard stats API:", err);
+      }
+    };
+    fetchStats();
+  }, []);
+
   if (!ok) return null;
   return (
     <AppShell>
@@ -78,7 +119,7 @@ function DashboardPage() {
           action={
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-              Updated just now
+              Live API Sync
             </div>
           }
         />
@@ -86,10 +127,10 @@ function DashboardPage() {
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { icon: ClipboardList, label: "Total Orders", value: "48,210", trend: "+12.4%", color: "secondary" },
-            { icon: Truck, label: "Active Tankers", value: "1,084", trend: "+3.1%", color: "accent" },
-            { icon: Droplets, label: "Water Delivered", value: "186 ML", trend: "+18.7%", color: "primary" },
-            { icon: Activity, label: "Total Users", value: "32,540", trend: "+5.2%", color: "success" },
+            { icon: ClipboardList, label: "Total Orders", value: stats.totalOrders, trend: "+12.4%", color: "secondary" },
+            { icon: Truck, label: "Active Tankers", value: stats.activeTankers, trend: "+3.1%", color: "accent" },
+            { icon: Droplets, label: "Water Delivered", value: stats.waterDelivered, trend: "+18.7%", color: "primary" },
+            { icon: Activity, label: "Total Users", value: stats.totalUsers, trend: "+5.2%", color: "success" },
           ].map((c, i) => (
             <div
               key={c.label}

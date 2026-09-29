@@ -16,8 +16,9 @@ dist-ssr
 .nitro
 *.local
 
-# Wrangler / Cloudflare
-.wrangler/
+# Environment variables & secrets
+.env
+.env*.local
 .dev.vars
 
 # Editor directories and files
@@ -30,3 +31,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+backend/.env
+
+# Windows shortcuts & artifacts
+*.lnk
+Thumbs.db
+

@@ -26,6 +26,7 @@ function MyOrdersPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [complaintFor, setComplaintFor] = useState<Booking | null>(null);
 
+  // CHANGED: Async fetch for specific user's orders
   useEffect(() => {
     const u = currentUser();
     setUser(u);
@@ -37,7 +38,12 @@ function MyOrdersPage() {
       navigate({ to: "/dashboard" });
       return;
     }
-    const sync = () => setBookings(getBookings());
+    
+    const sync = async () => {
+      const data = await getBookings(u.email);
+      setBookings(data);
+    };
+    
     sync();
     window.addEventListener("tmms-store", sync);
     return () => window.removeEventListener("tmms-store", sync);
@@ -50,7 +56,9 @@ function MyOrdersPage() {
 
   const counts = useMemo(() => {
     const c = { pending: 0, in_transit: 0, delivered: 0, cancelled: 0 };
-    mine.forEach((o) => (c[o.status] += 1));
+    mine.forEach((o) => {
+        if (c[o.status] !== undefined) c[o.status] += 1;
+    });
     return c;
   }, [mine]);
 
@@ -130,7 +138,7 @@ function MyOrdersPage() {
                       <td className="px-5 py-3.5 text-muted-foreground max-w-xs truncate" title={o.address}>
                         {o.address}
                       </td>
-                      <td className="px-5 py-3.5">{o.size} L</td>
+                      <td className="px-5 py-3.5">{o.size || o.tanker_size} L</td>
                       <td className="px-5 py-3.5 text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5" /> {o.eta}
@@ -138,7 +146,7 @@ function MyOrdersPage() {
                       </td>
                       <td className="px-5 py-3.5"><StatusBadge status={o.status} /></td>
                       <td className="px-5 py-3.5 text-right font-bold text-primary">
-                        ₨ {o.price.toLocaleString()}
+                        ₨ {(o.price || 0).toLocaleString()}
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <button
@@ -169,10 +177,11 @@ function ComplaintModal({ booking, onClose }: { booking: Booking; onClose: () =>
   const [description, setDescription] = useState("");
   const [done, setDone] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  // CHANGED: Async complaint submission
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const u = currentUser();
-    addComplaint({
+    await addComplaint({
       orderId: booking.id,
       userEmail: u?.email ?? "guest@tmms",
       customer: u?.fullName ?? booking.customer,

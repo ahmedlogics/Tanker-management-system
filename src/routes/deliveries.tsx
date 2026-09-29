@@ -16,18 +16,62 @@ export const Route = createFileRoute("/deliveries")({
   component: DeliveriesPage,
 });
 
+import { useEffect, useState } from "react";
+
 type DS = "in_transit" | "delivered" | "pending";
-const deliveries: { id: string; tanker: string; hydrant: string; destination: string; volume: string; departed: string; arrived: string; status: DS }[] = [
-  { id: "DLV-7821", tanker: "TMK-1138", hydrant: "Safoora", destination: "Gulshan Block 5", volume: "5,000 L", departed: "08:42", arrived: "—", status: "in_transit" },
-  { id: "DLV-7820", tanker: "TMK-0942", hydrant: "Sakhi Hassan", destination: "DHA Phase 6", volume: "8,000 L", departed: "07:55", arrived: "08:38", status: "delivered" },
-  { id: "DLV-7819", tanker: "TMK-1810", hydrant: "Manghopir", destination: "Korangi 2½", volume: "5,000 L", departed: "07:10", arrived: "07:58", status: "delivered" },
-  { id: "DLV-7818", tanker: "TMK-3301", hydrant: "NIPA", destination: "Saddar", volume: "5,000 L", departed: "—", arrived: "—", status: "pending" },
-  { id: "DLV-7817", tanker: "TMK-2014", hydrant: "Pipri", destination: "Lyari", volume: "3,000 L", departed: "06:24", arrived: "07:12", status: "delivered" },
-  { id: "DLV-7816", tanker: "TMK-1602", hydrant: "Manghopir", destination: "Orangi Sec 11", volume: "8,000 L", departed: "06:00", arrived: "07:05", status: "delivered" },
+type DeliveryItem = {
+  id: string;
+  orderId?: string;
+  tanker: string;
+  driver?: string;
+  hydrant: string;
+  destination: string;
+  volume: string;
+  departed: string;
+  arrived: string;
+  status: DS;
+  eta?: string;
+};
+
+const initialDeliveries: DeliveryItem[] = [
+  { id: "DLV-7821", tanker: "TMK-1138", hydrant: "Safoora", destination: "Gulshan Block 5", volume: "1,000 L", departed: "08:42", arrived: "—", status: "in_transit" },
+  { id: "DLV-7820", tanker: "TMK-0942", hydrant: "Sakhi Hassan", destination: "DHA Phase 6", volume: "2,000 L", departed: "07:55", arrived: "08:38", status: "delivered" },
+  { id: "DLV-7819", tanker: "TMK-1810", hydrant: "Manghopir", destination: "Korangi 2½", volume: "1,000 L", departed: "07:10", arrived: "07:58", status: "delivered" },
+  { id: "DLV-7818", tanker: "TMK-3301", hydrant: "NIPA", destination: "Saddar", volume: "2,000 L", departed: "—", arrived: "—", status: "pending" },
+  { id: "DLV-7817", tanker: "TMK-2014", hydrant: "Pipri", destination: "Lyari", volume: "1,000 L", departed: "06:24", arrived: "07:12", status: "delivered" },
+  { id: "DLV-7816", tanker: "TMK-1602", hydrant: "Manghopir", destination: "Orangi Sec 11", volume: "500 L", departed: "06:00", arrived: "07:05", status: "delivered" },
 ];
 
 function DeliveriesPage() {
   const { ok } = useRoleGuard(["admin"]);
+  const [deliveries, setDeliveries] = useState<DeliveryItem[]>(initialDeliveries);
+  const [stats, setStats] = useState({
+    totalVolume: "184,000 L",
+    avgTime: "47 min",
+    activeHydrants: "14 / 16",
+    completed: 128
+  });
+
+  useEffect(() => {
+    const fetchDeliveries = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/deliveries");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.deliveries && Array.isArray(data.deliveries)) {
+            setDeliveries(data.deliveries);
+          }
+          if (data.stats) {
+            setStats(data.stats);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load deliveries API:", err);
+      }
+    };
+    fetchDeliveries();
+  }, []);
+
   if (!ok) return null;
   return (
     <AppShell>
@@ -36,10 +80,10 @@ function DeliveriesPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { icon: Droplets, l: "Total Volume Today", v: "184,000 L", c: "secondary" },
-            { icon: Clock, l: "Avg Delivery Time", v: "47 min", c: "accent" },
-            { icon: MapPin, l: "Active Hydrants", v: "14 / 16", c: "primary" },
-            { icon: Droplets, l: "Completed", v: "128", c: "success" },
+            { icon: Droplets, l: "Total Volume Today", v: stats.totalVolume, c: "secondary" },
+            { icon: Clock, l: "Avg Delivery Time", v: stats.avgTime, c: "accent" },
+            { icon: MapPin, l: "Active Hydrants", v: stats.activeHydrants, c: "primary" },
+            { icon: Droplets, l: "Completed", v: String(stats.completed), c: "success" },
           ].map((s) => (
             <div key={s.l} className="bg-card rounded-2xl p-5 border border-border shadow-card">
               <div className={`h-10 w-10 rounded-lg bg-${s.c}/10 flex items-center justify-center mb-3`}>

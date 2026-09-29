@@ -15,6 +15,8 @@ import heroTanker from "@/assets/hero-tanker.jpg";
 import hydrant from "@/assets/hydrant-station.jpg";
 import delivery from "@/assets/delivery-scene.jpg";
 
+import { currentUser, signOut, type User } from "@/lib/tmms-store";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -42,6 +44,15 @@ const slides = [
 
 function HomePage() {
   const [slide, setSlide] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    setUser(currentUser());
+    const sync = () => setUser(currentUser());
+    window.addEventListener("tmms-store", sync);
+    return () => window.removeEventListener("tmms-store", sync);
+  }, []);
+
   useEffect(() => {
     const t = setInterval(() => setSlide((s) => (s + 1) % slides.length), 4500);
     return () => clearInterval(t);
@@ -68,18 +79,40 @@ function HomePage() {
             <Link to="/book-tanker" className="hover:text-white">Book Tanker</Link>
           </nav>
           <div className="flex items-center gap-2">
-            <Link
-              to="/signin"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold text-sm hover:bg-white/20 transition"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/signup"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-accent text-accent-foreground font-semibold text-sm shadow-elegant hover:opacity-95 transition"
-            >
-              Sign Up <ArrowRight className="h-4 w-4" />
-            </Link>
+            {user ? (
+              <div className="flex items-center gap-2.5">
+                <Link
+                  to={user.role === "admin" ? "/dashboard" : "/my-orders"}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-accent text-accent-foreground font-semibold text-sm shadow-elegant hover:opacity-95 transition"
+                >
+                  {user.role === "admin" ? "Admin Dashboard" : "My Orders"} <ArrowRight className="h-4 w-4" />
+                </Link>
+                <button
+                  onClick={() => {
+                    signOut();
+                    setUser(null);
+                  }}
+                  className="hidden sm:inline-flex items-center px-3 py-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold text-xs hover:bg-white/20 transition"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold text-sm hover:bg-white/20 transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-accent text-accent-foreground font-semibold text-sm shadow-elegant hover:opacity-95 transition"
+                >
+                  Sign Up <ArrowRight className="h-4 w-4" />
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>

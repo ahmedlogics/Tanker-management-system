@@ -20,9 +20,10 @@ function SignInPage() {
   const [role, setRole] = useState<"customer" | "admin">("customer");
   const [error, setError] = useState("");
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = signIn(email, password);
+const submit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const r = await signIn(email, password); 
+
     if (!r.ok) return setError(r.error ?? "Sign in failed");
     const u = currentUser();
     if (!u) return setError("Sign in failed");
