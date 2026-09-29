@@ -88,7 +88,7 @@ function write<T>(key: string, val: T) {
 }
 
 
-const API_URL = "http://127.0.0.1:5000/api";
+export const API_URL = (import.meta.env.VITE_API_URL as string) || (import.meta.env.PROD ? "/api" : "http://127.0.0.1:5000/api");
 
 // --- USERS & AUTHENTICATION ---
 export async function signUp(u: Omit<User, "id">): Promise<{ ok: boolean; error?: string }> {

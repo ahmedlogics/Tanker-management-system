@@ -3,6 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Truck, ClipboardList, Droplets, TrendingUp, Activity, ArrowUpRight } from "lucide-react";
 import { useRoleGuard } from "@/hooks/use-role-guard";
+import { API_URL } from "@/lib/tmms-store";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -93,7 +94,7 @@ function DashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/dashboard/stats");
+        const res = await fetch(`${API_URL}/dashboard/stats`);
         if (res.ok) {
           const data = await res.json();
           if (data.stats) setStats(data.stats);

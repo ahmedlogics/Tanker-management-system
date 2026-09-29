@@ -3,6 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { MapPin, Clock, Droplets } from "lucide-react";
 import { useRoleGuard } from "@/hooks/use-role-guard";
+import { API_URL } from "@/lib/tmms-store";
 
 export const Route = createFileRoute("/deliveries")({
   head: () => ({
@@ -55,7 +56,7 @@ function DeliveriesPage() {
   useEffect(() => {
     const fetchDeliveries = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/deliveries");
+        const res = await fetch(`${API_URL}/deliveries`);
         if (res.ok) {
           const data = await res.json();
           if (data.deliveries && Array.isArray(data.deliveries)) {

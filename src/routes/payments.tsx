@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useEffect, useState, useMemo } from "react";
-import { currentUser, getBookings, type Booking, type User } from "@/lib/tmms-store";
+import { currentUser, getBookings, type Booking, type User, API_URL } from "@/lib/tmms-store";
 
 export const Route = createFileRoute("/payments")({
   head: () => ({
@@ -392,7 +392,7 @@ function AdminPaymentsView() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/payments");
+        const res = await fetch(`${API_URL}/payments`);
         if (res.ok) {
           const json = await res.json();
           setData(json);

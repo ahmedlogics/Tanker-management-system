@@ -4,6 +4,7 @@ import { PageHeader, StatusBadge } from "@/components/ui-bits";
 import { Plus, Search, Truck, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useRoleGuard } from "@/hooks/use-role-guard";
+import { API_URL } from "@/lib/tmms-store";
 
 export const Route = createFileRoute("/tankers")({
   head: () => ({
@@ -46,7 +47,7 @@ function TankersPage() {
 
   const fetchTankers = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/tankers");
+      const res = await fetch(`${API_URL}/tankers`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
@@ -188,7 +189,7 @@ function TankersPage() {
                 status: "available",
               };
               try {
-                await fetch("http://127.0.0.1:5000/api/tankers", {
+                await fetch(`${API_URL}/tankers`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(newTanker),
